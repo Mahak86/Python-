@@ -1,0 +1,53 @@
+#Time Calculator Project
+def add_time(start, duration, start_day=None):
+    # Days of the week in order
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    
+    # Splitting the start time into its components
+    start_time, period = start.split()
+    start_hour, start_minute = map(int, start_time.split(':'))
+
+    # Splitting the duration time into hours and minutes
+    duration_hour, duration_minute = map(int, duration.split(':'))
+
+    # Converting 12-hour format to 24-hour format for easier calculation
+    if period == "PM":
+        start_hour += 12
+    elif period == "AM" and start_hour == 12:
+        start_hour = 0
+
+    # Calculating the total minutes
+    total_minutes = start_minute + duration_minute
+    total_hours = start_hour + duration_hour + (total_minutes // 60)
+    total_minutes %= 60
+    total_days = total_hours // 24
+    total_hours %= 24
+
+    # Convert back to 12-hour format
+    if total_hours == 0:
+        end_hour = 12
+        end_period = "AM"
+    elif total_hours < 12:
+        end_hour = total_hours
+        end_period = "AM"
+    elif total_hours == 12:
+        end_hour = 12
+        end_period = "PM"
+    else:
+        end_hour = total_hours - 12
+        end_period = "PM"
+
+    # Formatting the result
+    new_time = f"{end_hour}:{total_minutes:02d} {end_period}"
+
+    if start_day:
+        day_index = days_of_week.index(start_day.capitalize())
+        new_day = days_of_week[(day_index + total_days) % 7]
+        new_time += f", {new_day}"
+
+    if total_days == 1:
+        new_time += " (next day)"
+    elif total_days > 1:
+        new_time += f" ({total_days} days later)"
+
+    return new_time
